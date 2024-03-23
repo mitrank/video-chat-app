@@ -1,16 +1,29 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../context/SocketProvider";
+import { useNavigate } from "react-router-dom";
 
 const LobbyScreen = () => {
   const [emailId, setEmailId] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const socket = useSocket();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("room:join", data => {
-      console.log("Data from backend: ", data)
-    });
+    socket.on("room:join", (data) => handleRoomJoin(data));
+
+    return () => {
+      socket.off("room:join", (data) => handleRoomJoin(data));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
+
+  const handleRoomJoin = useCallback(
+    (data) => {
+      const { emailId, roomCode } = data;
+      navigate(`/room/${roomCode}`);
+    },
+    [navigate]
+  );
 
   const handleSubmitForm = useCallback(
     (e) => {
@@ -28,6 +41,7 @@ const LobbyScreen = () => {
         <input
           type="email"
           id="email"
+          required
           value={emailId}
           onChange={(e) => setEmailId(e.target.value)}
         />
@@ -36,6 +50,7 @@ const LobbyScreen = () => {
         <input
           type="text"
           id="room"
+          required
           value={roomCode}
           onChange={(e) => setRoomCode(e.target.value)}
         />
