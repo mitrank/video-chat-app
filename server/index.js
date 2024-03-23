@@ -13,6 +13,8 @@ io.on("connection", (socket) => {
     const { emailId, roomCode } = data;
     mapEmailIdToSocketId.set(emailId, socket.id);
     mapSocketIdToEmailId.set(socket.id, emailId);
+    io.to(roomCode).emit("user:joined", { emailId, id: socket.id });
+    socket.join(roomCode);
     io.to(socket.id).emit("room:join", data);
   });
 });
