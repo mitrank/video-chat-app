@@ -19,7 +19,7 @@ const LobbyScreen = () => {
 
   const handleRoomJoin = useCallback(
     (data) => {
-      const { emailId, roomCode } = data;
+      const { roomCode } = data;
       navigate(`/room/${roomCode}`);
     },
     [navigate]

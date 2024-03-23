@@ -17,4 +17,20 @@ io.on("connection", (socket) => {
     socket.join(roomCode);
     io.to(socket.id).emit("room:join", data);
   });
+
+  socket.on("user:call", ({ to, offer }) => {
+    io.to(to).emit("incoming:call", { from: socket.id, offer });
+  });
+
+  socket.on("call:accepted", ({ to, answer }) => {
+    io.to(to).emit("call:accepted", { from: socket.id, answer });
+  });
+
+  socket.on("peer:negotiation:needed", ({ to, offer }) => {
+    io.to(to).emit("peer:negotiation:needed", { from: socket.id, offer });
+  });
+
+  socket.on("peer:negotiation:done", ({ to, answer }) => {
+    io.to(to).emit("peer:negotiation:final", { from: socket.id, answer });
+  });
 });
